@@ -9,7 +9,7 @@ import (
 
 func main() {
 	start := time.Now()
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), "foo", "bar")
 	userID := 10
 	val, err := fetchUserData(ctx, userID)
 	if err != nil {
@@ -19,12 +19,34 @@ func main() {
 	fmt.Println("took: ", time.Since(start))
 }
 
+type Response struct {
+	value int
+	err   error
+}
+
 func fetchUserData(ctx context.Context, userID int) (int, error) {
-	val, err := fetchThirdPartyStuffWhichCanBeSlow()
-	if err != nil {
-		return 0, err
+	val := ctx.Value("foo")
+	fmt.Println(val)
+	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*200)
+	defer cancel()
+	respch := make(chan Response)
+
+	go func() {
+		val, err := fetchThirdPartyStuffWhichCanBeSlow()
+		respch <- Response{
+			value: val,
+			err:   err,
+		}
+	}()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return 0, fmt.Errorf("fetching user data takes too long")
+		case resp := <-respch:
+			return resp.value, resp.err
+		}
 	}
-	return val, nil
 }
 
 func fetchThirdPartyStuffWhichCanBeSlow() (int, error) {

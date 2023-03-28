@@ -5,6 +5,7 @@ go 1.18
 require golang.org/x/net v0.8.0
 
 require (
+	github.com/anthdm/hollywood v0.0.0-20230313181247-7b48e18bb26e // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect

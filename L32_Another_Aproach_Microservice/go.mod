@@ -1,4 +1,4 @@
-module github.com/QiaoLin22/master-golang
+module github.com/QiaoLin22/master-golang/L32
 
 go 1.18
 

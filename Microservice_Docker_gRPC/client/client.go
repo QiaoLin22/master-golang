@@ -6,8 +6,21 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/QiaoLin22/golang-microservie-gPRC/proto"
 	"github.com/QiaoLin22/golang-microservie-gPRC/types"
+	"google.golang.org/grpc"
 )
+
+func NewGRPCClient(remoteAddr string) (proto.PriceFetcherClient, error) {
+	conn, err := grpc.Dial(remoteAddr, grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+
+	c := proto.NewPriceFetcherClient(conn)
+
+	return c, nil
+}
 
 type client struct {
 	endpoint string
